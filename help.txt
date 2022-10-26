@@ -1,0 +1,196 @@
+Custom Shell
+
+
+The custom shell is a build using C libraries and system calls including fork(), exec(), wait(), pthread_create(), pthread_join() and system().
+
+Internal commands that have been handled are: “cd “, “echo”, and “pwd”
+External commands that have been handled are: “ls”, ”cat”, “date”, “rm”, and “mkdir”
+
+main.c is our main file that starts the execution of our shell. Make sure that all other source files have been compiled before it starts execution. 
+
+The makefile compiles all the source files and generates the binary file for the shell. Use “make” command to do so.
+Command “./out” is to be used afterwards for starting the shell.
+The shell’s prompt shows the full path of CWD enclosed in [] and followed by a ‘$’ symbol.
+
+We are assuming that options to these commands shall be provided as the second argument in the command 
+(eg: cat -a <path1><path2> works as expected but cat <path1><path2> -a doesn’t).
+
+To execute external commands with thread operation, that command must end with “&t”.
+
+Internal Commands:
+•	cd: 
+    1.	cd : changes the current working directory to the home directory
+    2.	cd ~: changes the current working directory to the home directory
+    3.	cd -: changes the current working directory to the previous directory (gives an error message saying oldpwd is not set)
+    4.	cd <path>: changes the CWD to the path
+    5.	Errors:
+        1.	cd -<anything>: produces invalid option error
+        2.	cd <wrong path>: produces no such file or directory error
+
+•	pwd:
+    1.	pwd: gives the current working directory
+    2.	pwd -L: gives the current working directory
+    3.	pwd -P: gives the current working directory
+    4.	Errors:
+        1.	pwd -<anything other than l or p>: produces invalid option error
+
+•	echo:
+    1.	echo <anything> : prints
+    2.	echo –E: default behaviour of echo command
+    3.	echo ~: gives the value of the home working directory
+    4.	echo -n: gives output without printing a newline at the end
+    5.	echo --help: gives help related to the echo command
+    6.	Error:
+        1.	Echo -<invalid flag>: invalid flag error
+
+
+External commands:
+•	ls:
+    1.	ls: lists all files except hidden files .  and ..
+    2.	ls -a: prints names of all the files
+    3.	ls -A: prints every file except . and ..
+    4.	ls -1: prints files except for hidden files . and .. in a separate line
+    5.	ls <path>: shows files in that path (the above options are still valid) [assuming only a single path is present]
+    6.	Errors: 
+        1.	ls -<wrong flag>: invalid option error
+        2.	ls <wrong path>: no such file or directory
+
+•	cat:   [any number of files can be provided]
+    1.	cat <file1><file2>:  outputs file1’s and file2’s content
+    2.	cat -n <file1> <file2>:  outputs file1’s and file2’s content with line numbers
+    3.	cat -E <file1> <file2>:  outputs file1’s and file2’s content with a $ at the end of each line
+    4.	cat/cat -/cat -n/cat -E: follows the specific behaviour of the cat command and break when ^C is provided as an input
+    5.	Errors:
+        1.	cat <Wrong file name/path>: no such file exists
+        2.	cat <wrong flag>: invalid flag error
+
+•	date:
+    1.	date: prints system date and time
+    2.	date -u: prints the UTC date and time
+    3.	date -R: prints date and time in RFC 5322 format
+    4.	Errors:
+        1.	date -<Invalid flag>: invalid flag error
+        2.	date <argument>: too many arguments for date command
+
+•	rm:
+    1.	rm <f1> <f2> ...: removes files f1 f2 and so on
+    2.	rm -i <f1> <f2> …: removes files f1 f2 and so on but asks for permission from the user
+    3.	rm -f <f1> <f2> …: doesn’t prompt the user before deleting f1, f2 … and doesn’t produce an error even when some of these files don’t exist
+    4.	Errors:
+        1.	rm <directory path>: Is a directory
+        2.	rm <wrong file path>: file doesn’t exist
+        3.	rm <wrong flag>: Invalid option
+        4.	rm <flag> <no path>: missing operands
+
+•	mkdir:
+    1.	mkdir d1 d2 … : make directories d1, d2, …
+    2.	mkdir -v: print a message for each created directory
+    3.	mkdir -p: no error if existing, make parent directories as needed
+    4.	Errors:
+        1.	mkdir <wrong path>: No such file or directory  (eg: mkdir a/b where a is not a directory)
+        2.	mkdir <existing directory path>: directory already exists
+        3.	mkdir <wrong flag>: Invalid option
+        4.	mkdir <flag> <no path>: missing operands
+        5.	mkdir <no path>: missing operands
+
+
+Test Case:
+
+date
+date -u 
+date -R 
+date -t [error]
+date jkldfajlk [error]
+pwd 
+pwd -P
+pwd -L
+pwd -K
+pwd anything random
+ls
+ls -a 
+ls -A
+ls -1
+ls ../
+ls /home/abhinav/os/assignment/
+ls -a ../
+ls -a /home/abhinav/os/assignment/
+ls -A ../
+ls -A /home/abhinav/os/assignment/
+ls -1 ../
+ls -1 /home/abhinav/os/assignment/
+ls -a /home/abhinav
+ls -a /home/vanihba
+ls -a home/vanihba
+ls ../../../os
+ls ../../../os/assembly
+ls ../../../os/assembly/assignments
+cat ../../../os/assembly/assignments/inout.asm
+echo 
+echo -n
+echo -E
+echo abhinav
+echo -n abhinav
+echo -E abhinav
+echo ~
+echo --help
+cd -
+cd ./
+cd 
+cd -
+cd ~
+cd -
+cd ../
+cd -
+cd /home/abhinav/os/assignment/
+cd -
+cd ../../../os/assembly
+ls
+cd sample.asm
+ls sample.asm
+ls as2
+cat newfile.txt
+ls -a ../../../
+cat -n newfile.txt
+cat -E newfile.txt
+cat -r newfile.txt
+cat
+cat -n
+cat -E 
+cat -R
+ls
+cat fib.asm newfile.txt
+cat -n fib.asm newfile.txt
+cat -E fib.asm newfile.txt
+cat fib.asm newfile.txt abcd.txt
+rm sample
+ls /home/abhinav/os/assignment/assignment1/sample &t
+rm /home/abhinav/os/assignment/assignment1/sample &t
+ls /home/abhinav/os/assignment/assignment1/sample
+rm -i /home/abhinav/os/assignment/assignment1/sample /home/abhinav/os/assignment/assignment1/sample2
+rm -f /home/abhinav/os/assignment/assignment1/sample /home/abhinav/os/assignment/assignment1/sample2
+rm -t /home/abhinav/os/assignment/assignment1/sample2
+rm /home/abhinav/os/assignment/assignment1
+rm /home/abhinav/os/assignment/assignment1/sample
+rm /home/abhinav/os/assignment/assignment1/sample
+rm -i [error]
+mkdir a 
+mkdir b a &t
+ls &t
+cd a 
+ls
+cd -
+cd b
+ls
+cd -
+mkdir -p p/q p/r /home/abhinav/os/assembly/as2/p/s
+cd p
+ls
+cd ..
+ls
+mkdir -v g h
+ls
+mkdir -v g h [error]
+mkdir z/l    [error]
+mkdir -p     [error]
+mkdir -t l   [error]
+mkdir        [error]
