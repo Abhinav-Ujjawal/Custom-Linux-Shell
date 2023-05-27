@@ -3,7 +3,7 @@ Custom Shell
 
 The custom shell is a build using C libraries and system calls including fork(), exec(), wait(), pthread_create(), pthread_join() and system().
 
-Internal commands that have been handled are: “cd “, “echo”, and “pwd”
+Internal commands that have been handled are: “cd”, “echo”, and “pwd”
 External commands that have been handled are: “ls”, ”cat”, “date”, “rm”, and “mkdir”
 
 main.c is our main file that starts the execution of our shell. Make sure that all other source files have been compiled before it starts execution. 
